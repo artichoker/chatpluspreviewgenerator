@@ -1,0 +1,18 @@
+{
+  "name": "previewchatplus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "preview-chatbot.js",
+  "dependencies": {
+    "@glidejs/glide": "^3.4.1",
+    "csvtojson": "^2.0.10",
+    "node-json2html": "^1.2.0",
+    "sprintf-js": "^1.1.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
