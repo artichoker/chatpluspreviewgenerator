@@ -4,7 +4,7 @@ const fs = require("fs");
 const csv = require("csvtojson");
 var json2html = require("node-json2html");
 
-let json = fs.readFileSync("chatplus-chatbotplusrules-11081907.json");
+let json = fs.readFileSync("chatplus-chatbotplusrules-11111907.json");
 const data = JSON.parse(json);
 
 const rulea = {
@@ -13,7 +13,10 @@ const rulea = {
 };
 
 const HEADER = `
-<html lang="ja">
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
 <head>
 <title>chatbot preview</title>
 <link rel="stylesheet" href="node_modules/@glidejs/glide/dist/css/glide.core.min.css">
@@ -275,7 +278,7 @@ const transforms = {
           console.log("text_select:type", type);
         }
       }
-      return "<p class='btMes'>" + parseCPText(obj.text) + "</p>" + options;
+      return '<p class="btMes">' + parseCPText(obj.text) + "</p>" + options;
     }
   },
   imagemap: {
@@ -373,7 +376,7 @@ const transforms = {
     "<>": "div",
     class: "text",
     html: function(obj, index) {
-      return "<p class='btMes'>" + parseCPText(obj.value) + "</p>";
+      return '<p class="btMes">' + parseCPText(obj.value) + "</p>";
     }
   },
   action: {
@@ -396,7 +399,7 @@ const transforms = {
   },
   chatbotplus: {
     "<>": "div",
-    id: "${id}",
+    class: "bot",
     html: [
       {
         "<>": "div",
@@ -424,7 +427,7 @@ const transforms = {
   },
   chatbot: {
     "<>": "div",
-    id: "${#id}",
+    class: "bot",
     html: [
       {
         "<>": "div",
@@ -474,7 +477,7 @@ const transforms = {
         }
       }
       return (
-        "<p class='btMes'>" +
+        '<p class="btMes">' +
         parseCPText(obj["チャットボット発言"]) +
         "</p>" +
         options
@@ -500,6 +503,7 @@ var chatbotplus_html = json2html.transform(data, transforms.chatbotplus);
 fs.writeFileSync("preview.html", HEADER);
 fs.appendFileSync("preview.html", chatbotplus_html);
 
+/*
 csv()
   .fromFile("chatplus-chatbotrules-11101752.csv")
   .then(bot => {
@@ -507,6 +511,6 @@ csv()
     fs.appendFileSync("preview.html", chatbot_html);
     return chatbot_html;
   });
-
+*/
 //console.log(html)
 fs.appendFileSync("preview.html", FOOTER);
