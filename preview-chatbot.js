@@ -14,10 +14,9 @@ const rulea = {
 
 const HEADER = `
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
 <meta charset="UTF-8">
-<head>
 <title>chatbot preview</title>
 <link rel="stylesheet" href="node_modules/@glidejs/glide/dist/css/glide.core.min.css">
 <link rel="stylesheet" href="node_modules/@glidejs/glide/dist/css/glide.theme.min.css">
@@ -344,9 +343,10 @@ const transforms = {
         let mess = obj.images[i].message;
         let label = obj.images[i].options[0].label;
         li += sprintf(
-          '<li class="glide__slide"><div><img src="%s"></div><p>%s</p><a href="#%s" class="url">%s</a></li>',
+          '<li class="glide__slide"><div><img src="%s" alt="%s"></div><p>%s</p><a href="#%s" class="url">%s</a></li>',
           url,
           mess,
+			mess,
           label,
           label
         );
