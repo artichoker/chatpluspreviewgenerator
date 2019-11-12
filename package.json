@@ -5,6 +5,8 @@
   "main": "preview-chatbot.js",
   "dependencies": {
     "@glidejs/glide": "^3.4.1",
+    "command-line-args": "^5.1.1",
+    "command-line-usage": "^6.1.0",
     "csvtojson": "^2.0.10",
     "node-json2html": "^1.2.0",
     "sprintf-js": "^1.1.2"

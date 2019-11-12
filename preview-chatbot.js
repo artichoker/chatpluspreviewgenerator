@@ -1,10 +1,52 @@
 /*jshint esversion: 6 */
+const commandLineArgs = require('command-line-args');
+const commandLineUsage = require('command-line-usage');
 const sprintf = require("sprintf-js").sprintf;
 const fs = require("fs");
 const csv = require("csvtojson");
 var json2html = require("node-json2html");
 
-let json = fs.readFileSync("chatplus-chatbotplusrules-11111907.json");
+const optionDefinitions = [
+  {
+    name: 'help',
+    alias: 'h',
+    type: Boolean,
+    description: 'show help',
+  },
+  {
+    name: 'file',
+    alias: 'f',
+    type: String,
+    description: 'chatplus json file.',
+  }
+];
+
+const sections = [
+  {
+    header: 'ChatPlus Preview Maker',
+    content: 'convert chatbotplus json file to html to preview the all bots.'
+  },
+  {
+    header: 'Options',
+    optionList: optionDefinitions
+  }
+];
+
+const options = commandLineArgs(optionDefinitions);
+if(options.help) {
+  const usage = commandLineUsage(sections);
+  console.log(usage);
+  process.exit(0);
+}
+
+if(!options.file) {
+  const usage = commandLineUsage(sections);
+  console.log(usage);
+  process.exit(0);
+}
+
+
+let json = fs.readFileSync(options.file);
 const data = JSON.parse(json);
 
 const rulea = {
