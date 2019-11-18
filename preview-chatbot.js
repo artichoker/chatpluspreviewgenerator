@@ -67,15 +67,20 @@ const HEADER = `
 	border: 1px solid #ccc;
 	padding: 20px;
 	margin-bottom: 10px;
+    display:flex;
+    flex-wrap: wrap
 }
 .bot-0 {
+	display: none;
 	background-color: #EDEDED;
 	color: #999;
 }
-.name { font-size: 1.2rem; margin: 0;}
+.name { font-size: 1.2rem; margin: 0; width: 100%; order:1;}
 .remarks { display: none;}
 .rule {
 	margin : 0;
+    width: 50%;
+    order: 3;
 }
 .rulea {
 	list-style: none;
@@ -86,7 +91,7 @@ const HEADER = `
 .rulea li {
 	padding: 4px;
 }
-.text_select {
+.text, .text_select {
 	border-radius: 6px;
 	position: relative;
 	display: inline-block;
@@ -98,7 +103,7 @@ const HEADER = `
 	background: #fff;
 	width: 20rem;
 }
-.text_select:before {
+.text:before, .text_select:before {
 	content: "";
 	position: absolute;
 	top: 50%;
@@ -113,7 +118,8 @@ const HEADER = `
 }
 .chatwindow {
 	background-color: #F3F3F3;
-	padding: 20px;
+    width: 50%;
+    order: 2;
 }
 .ctext,
 .url {
