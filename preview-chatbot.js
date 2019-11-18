@@ -217,7 +217,7 @@ function parseCPText(s) {
           prefix = '<span style="font-size:' + rem + 'rem">' + prefix;
           postfix += "</span>";
         } else {
-          console.log("tag;", tags[i]);
+          console.log("tag:", tags[i]);
         }
       }
       return prefix + s + postfix;
@@ -233,7 +233,7 @@ const transforms = {
     html: function(obj, index) {
       if (rulea[obj[2]]) {
       } else {
-        console.log(obj[2]);
+        console.log("rulea:", obj[2]);
       }
       return sprintf(
         '<li id="%s">[%s] %s %s 「%s」</li>',
@@ -427,6 +427,13 @@ const transforms = {
       return '<p class="btMes">' + parseCPText(obj.value) + "</p>";
     }
   },
+  rule: {
+    "<>": "div",
+    class: "text",
+    html: function(obj, index) {
+      return '<p class="btMes">Rule: <a href="#id' + obj.value + '">ID:' + parseCPText(obj.value) + "</a></p>";
+    }
+  },
   action: {
     "<>": "div",
     html: function(obj, index) {
@@ -440,8 +447,10 @@ const transforms = {
         return json2html.transform(obj, transforms.imagemap);
       } else if (obj.type === "carousel") {
         return json2html.transform(obj.value, transforms.carousel);
+      } else if (obj.type === "rule") {
+        return json2html.transform(obj, transforms.rule);
       } else {
-        console.log(obj.type);
+        console.log("type:",obj.type);
       }
     }
   },
@@ -453,7 +462,7 @@ const transforms = {
         "<>": "div",
         class: "bot-${use_flg}",
         html: [
-          { "<>": "h2", class: "name", text: "ID:${id} ${name}" },
+          { "<>": "h2", class: "name", id: "id${id}",  text: "ID:${id} ${name}" },
           { "<>": "h3", class: "remarks", text: "${remarks}" },
           {
             "<>": "div",
