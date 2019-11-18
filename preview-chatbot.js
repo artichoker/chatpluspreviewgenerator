@@ -31,8 +31,13 @@ const sections = [
     optionList: optionDefinitions
   }
 ];
-
-const options = commandLineArgs(optionDefinitions);
+try{
+  const options = commandLineArgs(optionDefinitions);
+}catch(err){
+  const usage = commandLineUsage(sections);
+  console.log(usage);
+  process.exit(0);
+}
 if(options.help) {
   const usage = commandLineUsage(sections);
   console.log(usage);
