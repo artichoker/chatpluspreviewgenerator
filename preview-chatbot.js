@@ -31,13 +31,9 @@ const sections = [
     optionList: optionDefinitions
   }
 ];
-try{
-  const options = commandLineArgs(optionDefinitions);
-}catch(err){
-  const usage = commandLineUsage(sections);
-  console.log(usage);
-  process.exit(0);
-}
+
+const options = commandLineArgs(optionDefinitions);
+
 if(options.help) {
   const usage = commandLineUsage(sections);
   console.log(usage);
@@ -127,7 +123,8 @@ const HEADER = `
     order: 2;
 }
 .ctext,
-.url {
+.url,
+.status {
 	display: block;
 	font-size:1rem;
 	width: 18rem;
@@ -324,6 +321,12 @@ const transforms = {
             '<a class="url" target="%s" href="%s">%s</a>',
             target,
             obj.options[i].value,
+            label
+          );
+        } else if (type === "status") {
+          options += sprintf(
+            '<a class="status" href="#%s">%s</a>',
+            label,
             label
           );
         } else {
