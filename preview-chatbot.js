@@ -439,7 +439,7 @@ const transforms = {
     "<>": "div",
     class: "text",
     html: function(obj, index) {
-      return '<p class="btMes">Rule: <a href="#id' + obj.value + '">ID:' + parseCPText(obj.value) + "</a></p>";
+      return '<p class="btMes">特定ルールを実行: <a href="#id' + obj.value + '">ID:' + parseCPText(obj.value) + "</a></p>";
     }
   },
   action: {
