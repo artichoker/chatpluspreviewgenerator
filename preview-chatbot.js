@@ -202,21 +202,21 @@ function parseCPText(s) {
       let postfix = "";
       tags = cp.split(";");
       for (var i = 0; i < tags.length; i++) {
-        if (tags[i] === "cpb") {
+        if ((tel = /cplink=["']tel:([0-9\-]+)["']/.exec(tags[i]))) {
+          prefix = '<a href="tel:' + tel[1] + '">' + prefix;
+          postfix += "</a>";
+        } else if ((link = /cplink=["']([^"']+)["']/.exec(tags[i]))) {
+          prefix = '<a href="' + link[1] + '">' + prefix;
+          postfix += "</a>";
+        } else if ((link = /cplink_target=["']([^"']+)["']/.exec(tags[i]))) {
+          prefix = '<a href="' + link[1] + '" target="link">' + prefix;
+          postfix += "</a>";
+        } else if (tags[i] === "cpb") {
           prefix = "<strong>" + prefix;
           postfix += "</strong>";
         } else if (tags[i] === "cpu") {
           prefix = "<u>" + prefix;
           postfix += "</u>";
-        } else if ((tel = /cplink=["']tel:([0-9\-]+)["']/.exec(tags[i]))) {
-          prefix = '<a href="tel:' + tel[1] + '">' + prefix;
-          postfix += "</a>";
-        } else if ((link = /cplink=["']([^"']+)["']/.exec(tags[i]))) {
-          prefix = '<a href="' + link[1] + '>' + prefix;
-          postfix += "</a>";
-        } else if ((link = /cplink_target=["']([^"']+)["']/.exec(tags[i]))) {
-          prefix = '<a href="' + link[1] + '" target="link">' + prefix;
-          postfix += "</a>";
         } else if ((font = /cpsize=["']([0-9]+)px["']/.exec(tags[i]))) {
           let rem = 20 / font[1];
           prefix = '<span style="font-size:' + rem + 'rem">' + prefix;
@@ -229,7 +229,7 @@ function parseCPText(s) {
     }
   );
   s = s.replace(/\\r\\n/g,"<br>");
-  return s.replace(/(\r\n)/g, "<br>");
+  return s.replace(/(\r\n)/g, "");
 }
 const transforms = {
   rulea: {
@@ -442,7 +442,7 @@ const transforms = {
     "<>": "div",
     class: "text",
     html: function(obj, index) {
-      return '<p class="btMes">スクリプト実行:">:<pre>' + parseCPText(obj.value) + "</pre></p>";
+      return '<p class="btMes">スクリプト実行:<pre>' + parseCPText(obj.value) + "</pre></p>";
     }
   },
   rule: {
