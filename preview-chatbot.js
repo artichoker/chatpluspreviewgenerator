@@ -211,6 +211,9 @@ function parseCPText(s) {
         } else if ((tel = /cplink=["']tel:([0-9\-]+)["']/.exec(tags[i]))) {
           prefix = '<a href="tel:' + tel[1] + '">' + prefix;
           postfix += "</a>";
+        } else if ((link = /cplink=["']([^"']+)["']/.exec(tags[i]))) {
+          prefix = '<a href="' + link[1] + '>' + prefix;
+          postfix += "</a>";
         } else if ((link = /cplink_target=["']([^"']+)["']/.exec(tags[i]))) {
           prefix = '<a href="' + link[1] + '" target="link">' + prefix;
           postfix += "</a>";
@@ -435,6 +438,13 @@ const transforms = {
       return '<p class="btMes">' + parseCPText(obj.value) + "</p>";
     }
   },
+  code: {
+    "<>": "div",
+    class: "text",
+    html: function(obj, index) {
+      return '<p class="btMes">スクリプト実行:">:<pre>' + parseCPText(obj.value) + "</pre></p>";
+    }
+  },
   rule: {
     "<>": "div",
     class: "text",
@@ -457,6 +467,8 @@ const transforms = {
         return json2html.transform(obj.value, transforms.carousel);
       } else if (obj.type === "rule") {
         return json2html.transform(obj, transforms.rule);
+      } else if (obj.type === "code") {
+        return json2html.transform(obj, transforms.code);
       } else {
         console.log("type:",obj.type);
       }
