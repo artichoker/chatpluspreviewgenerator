@@ -183,6 +183,20 @@ label, input, button, textarea {
 .glide__bullets { bottom: 0;}
 .glide__bullet--active,
 .glide__bullet { background-color: #ccc; }
+.click_count, .pv_count, .withdrawal_rate {
+  padding: 3px 6px;
+  margin-right: 8px;
+  margin-left: 1px;
+  font-size: 75%;
+  color: white;
+  border-radius: 6px;
+  box-shadow: 0 0 3px #ddd;
+  white-space: nowrap;
+}
+.click_count { background-color: #ad4040;}
+a span.click_count { border-radius: 12px; width:12px; height:18px; display: inline-block; text-align:center;}
+.pv_count {  background-color: #33F; }
+.withdrawal_rate { background-color: #3CC; }
 </style>
 <script src="node_modules/@glidejs/glide/dist/glide.min.js"></script>
 </head>
@@ -319,11 +333,13 @@ const transforms = {
       for (var i = 0; i < obj.options.length; i++) {
         let type = obj.options[i].type;
         let label = obj.options[i].label;
+        let click_count = obj.options[i].click_count || "-";
         if (type === "ctext") {
           options += sprintf(
-            '<a class="ctext" href="#%s">%s</a>',
+            '<a class="ctext" href="#%s">%s <span class="click_count">%s</span></a>',
             label,
-            label
+            label,
+            click_count
           );
         } else if (type === "url") {
           let target = "self";
@@ -331,16 +347,18 @@ const transforms = {
             target = "link";
           }
           options += sprintf(
-            '<a class="url" target="%s" href="%s">%s</a>',
+            '<a class="url" target="%s" href="%s">%s <span class="click_count">%s</span></a>',
             target,
             obj.options[i].value,
-            label
+            label,
+            click_count
           );
         } else if (type === "status") {
           options += sprintf(
-            '<a class="status" href="#%s">%s</a>',
+            '<a class="status" href="#%s">%s <span class="click_count">%s</span></a>',
             label,
-            label
+            label,
+            click_count
           );
         } else {
           console.log("text_select:type", type);
@@ -480,7 +498,7 @@ const transforms = {
       } else if (obj.type === "code") {
         return json2html.transform(obj, transforms.code);
       } else {
-        console.log("type:",obj.type);
+        console.log("type:", obj.type);
       }
     }
   },
@@ -493,6 +511,9 @@ const transforms = {
         class: "bot-${use_flg}",
         html: [
           { "<>": "h2", class: "name", id: "id${id}",  text: "ID:${id} ${name}" },
+          { "<>": "div", class: "pv_count", text: "表示回数: ${pv_count}"},
+          { "<>": "div", class: "click_count", text: "クリック回数: ${click_count}"},
+          { "<>": "div", class: "withdrawal_rate", text: "放棄率: ${withdrawal_rate}"},
           { "<>": "h3", class: "remarks", text: "${remarks}" },
           {
             "<>": "div",
@@ -505,16 +526,26 @@ const transforms = {
             "<>": "div",
             class: "chatwindow",
             html: function(obj, index) {
+              if( obj.click_log.length > 0){
+                var n = (Object.keys(obj.click_log[0]).length - 7) / 2
+                if (n > 0){
+                  obj.action.forEach(element => {
+                    if(element.type === "text_select"){
+                      element.value.options.forEach(opt =>{
+                        for( var i = 1; i <= n; i++){
+                          let aname = "a" + i + "_name"
+                          let acount = "a" + i + "_click"
+                          if( obj.click_log[0][aname] === opt.label ){
+                            opt.click_count = obj.click_log[0][acount]
+                          }
+                        }
+                      })
+                    }  
+                  });
+                }
+              }
               return json2html.transform(obj.action, transforms.action);
             }
-          },
-          {
-            "<>": "div",
-            class: "log",
-            html: function(obj, index) {
-              return log;
-            }
-          
           }
         ]
       }
@@ -602,11 +633,19 @@ fs.createReadStream(options.log)
   .on('data', (data) => log.push(data))
   .on('end', () => {
   
-    console.log(log);
+    const result = Array.from(
+      data, 
+      ael => (
+        ael.click_count     = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log.click_count),
+        ael.pv_count        = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log.pv_count),
+        ael.withdrawal_rate = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log.withdrawal_rate),
+        ael.click_log       = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log),
+        ael));
+    //console.log(result)
+
     var chatbotplus_html = json2html.transform(data, transforms.chatbotplus);
     fs.writeFileSync("preview.html", HEADER);
     fs.appendFileSync("preview.html", chatbotplus_html);
     fs.appendFileSync("preview.html", FOOTER);
   });
   
-
