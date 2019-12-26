@@ -3,7 +3,7 @@ const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
 const sprintf = require("sprintf-js").sprintf;
 const fs = require("fs");
-const csv = require("csvtojson");
+const csv = require("csv-parser");
 var json2html = require("node-json2html");
 
 const optionDefinitions = [
@@ -18,6 +18,12 @@ const optionDefinitions = [
     alias: 'f',
     type: String,
     description: 'chatplus json file.',
+  },
+  {
+    name: 'log',
+    alias: 'l',
+    type: String,
+    description: 'chatplus csv log file.',
   }
 ];
 
@@ -46,9 +52,13 @@ if(!options.file) {
   process.exit(0);
 }
 
+if(!options.log) {
+  const usage = commandLineUsage(sections);
+  console.log(usage);
+  process.exit(0);
+}
 
-let json = fs.readFileSync(options.file);
-const data = JSON.parse(json);
+
 
 const rulea = {
   clMes: "訪問者発言",
@@ -229,7 +239,7 @@ function parseCPText(s) {
     }
   );
   s = s.replace(/\\r\\n/g,"<br>");
-  return s.replace(/(\r\n)/g, "");
+  return s.replace(/(\r\n)/g, "<br>");
 }
 const transforms = {
   rulea: {
@@ -497,6 +507,14 @@ const transforms = {
             html: function(obj, index) {
               return json2html.transform(obj.action, transforms.action);
             }
+          },
+          {
+            "<>": "div",
+            class: "log",
+            html: function(obj, index) {
+              return log;
+            }
+          
           }
         ]
       }
@@ -575,19 +593,20 @@ const transforms = {
   }
 };
 
-var chatbotplus_html = json2html.transform(data, transforms.chatbotplus);
+let json = fs.readFileSync(options.file);
+const data = JSON.parse(json);
+const log = [];
 
-fs.writeFileSync("preview.html", HEADER);
-fs.appendFileSync("preview.html", chatbotplus_html);
-
-/*
-csv()
-  .fromFile("chatplus-chatbotrules-11101752.csv")
-  .then(bot => {
-    const chatbot_html = json2html.transform(bot, transforms.chatbot);
-    fs.appendFileSync("preview.html", chatbot_html);
-    return chatbot_html;
+fs.createReadStream(options.log)
+  .pipe(csv())
+  .on('data', (data) => log.push(data))
+  .on('end', () => {
+  
+    console.log(log);
+    var chatbotplus_html = json2html.transform(data, transforms.chatbotplus);
+    fs.writeFileSync("preview.html", HEADER);
+    fs.appendFileSync("preview.html", chatbotplus_html);
+    fs.appendFileSync("preview.html", FOOTER);
   });
-*/
-//console.log(html)
-fs.appendFileSync("preview.html", FOOTER);
+  
+
