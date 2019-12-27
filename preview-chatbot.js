@@ -530,9 +530,9 @@ const transforms = {
         class: "bot-${use_flg}",
         html: [
           { "<>": "h2", class: "name", id: "id${id}",  text: "ID:${id} ${name}" },
-          { "<>": "div", class: "pv_count", text: "表示回数: ${pv_count}"},
-          { "<>": "div", class: "click_count", text: "クリック回数: ${click_count}"},
-          { "<>": "div", class: "withdrawal_rate", text: "放棄率: ${withdrawal_rate}%"},
+          { "<>": "div", class: "pv_count", text: "起動回数: ${pv_count}"},
+          { "<>": "div", class: "click_count", text: "クリック数: ${click_count}"},
+          { "<>": "div", class: "withdrawal_rate", text: "離脱率: ${withdrawal_rate}%"},
           { "<>": "h3", class: "remarks", text: "${remarks}" },
           {
             "<>": "div",
