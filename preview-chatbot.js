@@ -40,19 +40,19 @@ const sections = [
 
 const options = commandLineArgs(optionDefinitions);
 
-if(options.help) {
+if (options.help) {
   const usage = commandLineUsage(sections);
   console.log(usage);
   process.exit(0);
 }
 
-if(!options.file) {
+if (!options.file) {
   const usage = commandLineUsage(sections);
   console.log(usage);
   process.exit(0);
 }
 
-if(!options.log) {
+if (!options.log) {
   const usage = commandLineUsage(sections);
   console.log(usage);
   process.exit(0);
@@ -240,7 +240,7 @@ const GLIDE_ARROWS = `
 function parseCPText(s) {
   s = s.replace(
     /\[\[(?:(cpb|cpu|cplink="[^"]+"|cplink_target="[^"]+"|cpsize="[^"]+")[;:]){1,}([^\[]+)\]\]/g,
-    function(match, cp, s) {
+    function (match, cp, s) {
       let prefix = "";
       let postfix = "";
       tags = cp.split(";");
@@ -271,14 +271,14 @@ function parseCPText(s) {
       return prefix + s + postfix;
     }
   );
-  s = s.replace(/\\r\\n/g,"<br>");
+  s = s.replace(/\\r\\n/g, "<br>");
   return s.replace(/(\r\n)/g, "<br>");
 }
 const transforms = {
   rulea: {
     "<>": "ul",
     class: "rulea",
-    html: function(obj, index) {
+    html: function (obj, index) {
       if (rulea[obj[2]]) {
       } else {
         console.log("rulea:", obj[2]);
@@ -296,7 +296,7 @@ const transforms = {
   textform: {
     "<>": "div",
     class: "textform",
-    html: function(obj, index) {
+    html: function (obj, index) {
       let elements = "";
       for (var i = 0; i < obj.elements.length; i++) {
         let name = obj.elements[i].name;
@@ -347,7 +347,7 @@ const transforms = {
   text_select: {
     "<>": "div",
     class: "text_select",
-    html: function(obj, index) {
+    html: function (obj, index) {
       let options = "";
       for (var i = 0; i < obj.options.length; i++) {
         let type = obj.options[i].type;
@@ -389,7 +389,7 @@ const transforms = {
   imagemap: {
     "<>": "div",
     class: "imagemap",
-    html: function(obj, index) {
+    html: function (obj, index) {
       const scale = 0.5;
       let options = JSON.parse(obj.value);
       let media_id = obj.image.split("/")[6].split(".")[0];
@@ -428,7 +428,7 @@ const transforms = {
     "<>": "div",
     class: "glide__bullets",
     "data-glide-el": "controls[nav]",
-    html: function(obj, index) {
+    html: function (obj, index) {
       let btn = "";
       for (var i = 0; i < obj.images.length; i++) {
         btn += sprintf(
@@ -442,7 +442,7 @@ const transforms = {
   glide_slides: {
     "<>": "ul",
     class: "glide__slides",
-    html: function(obj, index) {
+    html: function (obj, index) {
       let li = "";
       for (var i = 0; i < obj.images.length; i++) {
         let url = obj.images[i].url;
@@ -452,7 +452,7 @@ const transforms = {
           '<li class="glide__slide"><div><img src="%s" alt="%s"></div><p>%s</p><a href="#%s" class="url">%s</a></li>',
           url,
           mess,
-			mess,
+          mess,
           label,
           label
         );
@@ -464,7 +464,7 @@ const transforms = {
     "<>": "div",
     class: "glide__track",
     "data-glide-el": "track",
-    html: function(obj, index) {
+    html: function (obj, index) {
       return (
         json2html.transform(obj, transforms.glide_slides) +
         json2html.transform(obj, transforms.glide_bullets)
@@ -474,34 +474,34 @@ const transforms = {
   carousel: {
     "<>": "div",
     class: "glide",
-    html: function(obj, index) {
+    html: function (obj, index) {
       return json2html.transform(obj, transforms.glide_track) + GLIDE_ARROWS;
     }
   },
   text: {
     "<>": "div",
     class: "text",
-    html: function(obj, index) {
+    html: function (obj, index) {
       return '<p class="btMes">' + parseCPText(obj.value) + "</p>";
     }
   },
   code: {
     "<>": "div",
     class: "text",
-    html: function(obj, index) {
+    html: function (obj, index) {
       return '<p class="btMes">スクリプト実行:<pre>' + parseCPText(obj.value) + "</pre></p>";
     }
   },
   rule: {
     "<>": "div",
     class: "text",
-    html: function(obj, index) {
+    html: function (obj, index) {
       return '<p class="btMes">特定ルールを実行: <a href="#id' + obj.value + '">ID:' + parseCPText(obj.value) + "</a></p>";
     }
   },
   action: {
     "<>": "div",
-    html: function(obj, index) {
+    html: function (obj, index) {
       if (obj.type === "text_select") {
         return json2html.transform(obj.value, transforms.text_select);
       } else if (obj.type === "text") {
@@ -529,37 +529,37 @@ const transforms = {
         "<>": "div",
         class: "bot-${use_flg}",
         html: [
-          { "<>": "h2", class: "name", id: "id${id}",  text: "ID:${id} ${name}" },
-          { "<>": "div", class: "pv_count", text: "起動回数: ${pv_count}"},
-          { "<>": "div", class: "click_count", text: "クリック数: ${click_count}"},
-          { "<>": "div", class: "withdrawal_rate", text: "離脱率: ${withdrawal_rate}%"},
+          { "<>": "h2", class: "name", id: "id${id}", text: "ID:${id} ${name}" },
+          { "<>": "div", class: "pv_count", text: "起動回数: ${pv_count}" },
+          { "<>": "div", class: "click_count", text: "クリック数: ${click_count}" },
+          { "<>": "div", class: "withdrawal_rate", text: "離脱率: ${withdrawal_rate}%" },
           { "<>": "h3", class: "remarks", text: "${remarks}" },
           {
             "<>": "div",
             class: "rule",
-            html: function(obj, index) {
+            html: function (obj, index) {
               return json2html.transform(obj.rulea, transforms.rulea);
             }
           },
           {
             "<>": "div",
             class: "chatwindow",
-            html: function(obj, index) {
-              if( obj.click_log.length > 0){
+            html: function (obj, index) {
+              if (obj.click_log.length > 0) {
                 var n = (Object.keys(obj.click_log[0]).length - 7) / 2
-                if (n > 0){
+                if (n > 0) {
                   obj.action.forEach(element => {
-                    if(element.type === "text_select"){
-                      element.value.options.forEach(opt =>{
-                        for( var i = 1; i <= n; i++){
+                    if (element.type === "text_select") {
+                      element.value.options.forEach(opt => {
+                        for (var i = 1; i <= n; i++) {
                           let aname = "a" + i + "_name"
                           let acount = "a" + i + "_click"
-                          if( obj.click_log[0][aname] === opt.label ){
+                          if (obj.click_log[0][aname] === opt.label) {
                             opt.click_count = obj.click_log[0][acount]
                           }
                         }
                       })
-                    }  
+                    }
                   });
                 }
               }
@@ -582,14 +582,14 @@ const transforms = {
           {
             "<>": "div",
             class: "rule",
-            html: function(obj, index) {
+            html: function (obj, index) {
               return json2html.transform(obj, transforms.rule_simple);
             }
           },
           {
             "<>": "div",
             class: "chatwindow",
-            html: function(obj, index) {
+            html: function (obj, index) {
               return json2html.transform(obj, transforms.chatbot_simple);
             }
           }
@@ -599,14 +599,14 @@ const transforms = {
   },
   chatbot_simple: {
     "<>": "div",
-    html: function(obj, index) {
+    html: function (obj, index) {
       return json2html.transform(obj, transforms.text_select_simple);
     }
   },
   text_select_simple: {
     "<>": "div",
     class: "text_select",
-    html: function(obj, index) {
+    html: function (obj, index) {
       let options = "";
 
       for (var i = 1; ; i++) {
@@ -632,12 +632,12 @@ const transforms = {
   rule_simple: {
     "<>": "ul",
     class: "rulea",
-    html: function(obj, index) {
-	  var rules = obj["ユーザの発言が一致"].split("\\r\\n");
-	  var options = "";
-	  for (var i=0;i<rules.length;i++) {
-		  options += sprintf('<li id="%s">[%s] %s %s 「%s」</li>', rules[i], 'OR', rulea.clMes, '=', rules[i]);
-	  }
+    html: function (obj, index) {
+      var rules = obj["ユーザの発言が一致"].split("\\r\\n");
+      var options = "";
+      for (var i = 0; i < rules.length; i++) {
+        options += sprintf('<li id="%s">[%s] %s %s 「%s」</li>', rules[i], 'OR', rulea.clMes, '=', rules[i]);
+      }
       return options;
     }
   }
@@ -651,20 +651,20 @@ fs.createReadStream(options.log)
   .pipe(csv())
   .on('data', (data) => log.push(data))
   .on('end', () => {
-  
+
     const result = Array.from(
-      data, 
+      data,
       ael => (
-        ael.click_count     = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log.click_count),
-        ael.pv_count        = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log.pv_count),
+        ael.click_count = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log.click_count),
+        ael.pv_count = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log.pv_count),
         ael.withdrawal_rate = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => Math.round(log.withdrawal_rate * 1000) / 10),
-        ael.click_log       = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log),
+        ael.click_log = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log),
         ael));
-    //console.log(result)
+    console.log(result.length)
 
     var chatbotplus_html = json2html.transform(data, transforms.chatbotplus);
     fs.writeFileSync("preview.html", HEADER);
     fs.appendFileSync("preview.html", chatbotplus_html);
     fs.appendFileSync("preview.html", FOOTER);
   });
-  
+
