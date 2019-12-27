@@ -201,6 +201,12 @@ a span.click_count { border-radius: 12px; width:12px; height:18px; display: inli
 <script src="node_modules/@glidejs/glide/dist/glide.min.js"></script>
 </head>
 <body>
+<div>
+<button id="btnAll">全件表示</button>
+<button id="btnRank">表示回数順</button>
+<button id="zero_pv">起動回数ゼロ</button>
+<button id="zero_click">クリックゼロ</button>
+</div>
 `;
 
 FOOTER = `
