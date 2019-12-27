@@ -513,7 +513,7 @@ const transforms = {
           { "<>": "h2", class: "name", id: "id${id}",  text: "ID:${id} ${name}" },
           { "<>": "div", class: "pv_count", text: "表示回数: ${pv_count}"},
           { "<>": "div", class: "click_count", text: "クリック回数: ${click_count}"},
-          { "<>": "div", class: "withdrawal_rate", text: "放棄率: ${withdrawal_rate}"},
+          { "<>": "div", class: "withdrawal_rate", text: "放棄率: ${withdrawal_rate}%"},
           { "<>": "h3", class: "remarks", text: "${remarks}" },
           {
             "<>": "div",
@@ -638,7 +638,7 @@ fs.createReadStream(options.log)
       ael => (
         ael.click_count     = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log.click_count),
         ael.pv_count        = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log.pv_count),
-        ael.withdrawal_rate = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log.withdrawal_rate),
+        ael.withdrawal_rate = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => Math.round(log.withdrawal_rate * 1000) / 10),
         ael.click_log       = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log),
         ael));
     //console.log(result)
