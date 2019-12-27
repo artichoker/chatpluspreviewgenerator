@@ -86,11 +86,11 @@ const HEADER = `
 	background-color: #EDEDED;
 	color: #999;
 }
-.name { font-size: 1.2rem; margin: 0; width: 100%; order:1;}
+.name { font-size: 1.2rem; margin: 10px 0; width: 100%; order:1;}
 .remarks { display: none;}
 .rule {
-	margin : 0;
-    width: 50%;
+	margin : 0 0 0 5%;
+    width: 45%;
     order: 3;
 }
 .rulea {
@@ -206,6 +206,25 @@ a span.click_count { border-radius: 12px; width:12px; height:18px; display: inli
 FOOTER = `
 <script>
 new Glide('.glide').mount()
+</script>
+<script>
+document.addEventListener("click", function(e) {
+  const target = e.target;
+  // clickした要素がclass属性、ctextを含まない場合は処理を中断
+  if (!target.classList.contains("ctext")) return;
+  e.preventDefault();
+  const targetId = decodeURI(target.hash.substr(1));
+  const targetElement = document.getElementById(targetId);
+  // 画面上部から要素までの距離
+  const rectTop = targetElement.parentNode.parentNode.parentNode.getBoundingClientRect().top;
+  // 現在のスクロール距離
+  const offsetTop = window.pageYOffset;
+  // スクロール位置に持たせるバッファ
+  const buffer = 10;
+  const top = rectTop + offsetTop - buffer;
+
+  window.scrollTo(0, top);
+});
 </script>
 </body>
 </html>
