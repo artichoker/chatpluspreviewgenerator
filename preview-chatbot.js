@@ -213,6 +213,7 @@ document.addEventListener("click", function(e) {
   // clickした要素がclass属性、ctextを含まない場合は処理を中断
   if (!target.classList.contains("ctext")) return;
   e.preventDefault();
+  history.pushState(null, null, target.hash );
   const targetId = decodeURI(target.hash.substr(1));
   const targetElement = document.getElementById(targetId);
   // 画面上部から要素までの距離
@@ -530,9 +531,9 @@ const transforms = {
         class: "bot-${use_flg}",
         html: [
           { "<>": "h2", class: "name", id: "id${id}", text: "ID:${id} ${name}" },
-          { "<>": "div", class: "pv_count", text: "起動回数: ${pv_count}" },
-          { "<>": "div", class: "click_count", text: "クリック数: ${click_count}" },
-          { "<>": "div", class: "withdrawal_rate", text: "離脱率: ${withdrawal_rate}%" },
+          { "<>": "div", class: "pv_count", text: function () { if (typeof this.click_log !== 'undefined') { return "起動回数: " + this.click_log.pv_count } else { return '-' } } },
+          { "<>": "div", class: "click_count", text: function () { if (typeof this.click_log !== 'undefined') { return "クリック数: " + this.click_log.click_count } else { return '-' } } },
+          { "<>": "div", class: "withdrawal_rate", text: function () { if (typeof this.click_log !== 'undefined') { return "離脱率: " + Math.round(this.click_log.withdrawal_rate * 1000) / 10 + "%" } else { return '-' } } },
           { "<>": "h3", class: "remarks", text: "${remarks}" },
           {
             "<>": "div",
@@ -545,8 +546,8 @@ const transforms = {
             "<>": "div",
             class: "chatwindow",
             html: function (obj, index) {
-              if (obj.click_log.length > 0) {
-                var n = (Object.keys(obj.click_log[0]).length - 7) / 2
+              if (obj.click_log) {
+                var n = (Object.keys(obj.click_log).length - 7) / 2
                 if (n > 0) {
                   obj.action.forEach(element => {
                     if (element.type === "text_select") {
@@ -554,8 +555,8 @@ const transforms = {
                         for (var i = 1; i <= n; i++) {
                           let aname = "a" + i + "_name"
                           let acount = "a" + i + "_click"
-                          if (obj.click_log[0][aname] === opt.label) {
-                            opt.click_count = obj.click_log[0][acount]
+                          if (obj.click_log[aname] === opt.label) {
+                            opt.click_count = obj.click_log[acount]
                           }
                         }
                       })
@@ -655,12 +656,14 @@ fs.createReadStream(options.log)
     const result = Array.from(
       data,
       ael => (
-        ael.click_count = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log.click_count),
-        ael.pv_count = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log.pv_count),
-        ael.withdrawal_rate = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => Math.round(log.withdrawal_rate * 1000) / 10),
-        ael.click_log = log.filter(log => (log.id == ael.id && log.type === '2')).map(log => log),
+        ael.click_log = log.find(el => (el.id == ael.id && el.type === '2')),
         ael));
-    console.log(result.length)
+
+    // jsonの1番目がはじめの選択肢扱い、csvの１番目が type=3 初回メッセージであることを決め打ち
+    data.unshift(JSON.parse(JSON.stringify(data[0])));
+    data[0].click_log = log[0];
+    data[0].id = '0';
+    data[0].rulea = [];
 
     var chatbotplus_html = json2html.transform(data, transforms.chatbotplus);
     fs.writeFileSync("preview.html", HEADER);
