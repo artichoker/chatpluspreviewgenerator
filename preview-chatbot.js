@@ -197,6 +197,13 @@ label, input, button, textarea {
 a span.click_count { border-radius: 12px; width:12px; height:18px; display: inline-block; text-align:center;}
 .pv_count {  background-color: #33F; }
 .withdrawal_rate { background-color: #3CC; }
+.ranking li a {
+  display: inline-block;
+  width: 90%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-top: 4px;
+}
 </style>
 <script src="node_modules/@glidejs/glide/dist/glide.min.js"></script>
 </head>
@@ -604,6 +611,10 @@ const transforms = {
       }
     ]
   },
+  ranking : {
+    "<>": "li",
+    html: "<span class='pv_count'>${pv_count}</span> <a href='#id${id}'>${name}</a>"
+  },
   chatbot_simple: {
     "<>": "div",
     html: function (obj, index) {
@@ -665,14 +676,27 @@ fs.createReadStream(options.log)
         ael.click_log = log.find(el => (el.id == ael.id && el.type === '2')),
         ael));
 
-    // jsonの1番目がはじめの選択肢扱い、csvの１番目が type=3 初回メッセージであることを決め打ち
-    data.unshift(JSON.parse(JSON.stringify(data[0])));
-    data[0].click_log = log[0];
+    // 初回メッセージを先頭に追加する
+    data.unshift(JSON.parse(JSON.stringify(data[0]))); // cloneする
+    data[0].click_log = log[0]; // jsonの1番目がはじめの選択肢、csvの１番目が type=3の初回メッセージであることを決め打ちしています
     data[0].id = '0';
-    data[0].rulea = [];
+    data[0].rulea = []; // 初回メッセージはrulea を空にする
+
+    log.sort(function(a,b) {
+      a.pv_count = parseInt(a.pv_count)
+      b.pv_count = parseInt(b.pv_count)
+      if(a.pv_count > b.pv_count) {
+        return -1
+      } else {
+        return 1;
+      }
+    })
+
+    var ranking_html = json2html.transform(log, transforms.ranking);
 
     var chatbotplus_html = json2html.transform(data, transforms.chatbotplus);
     fs.writeFileSync("preview.html", HEADER);
+    fs.appendFileSync("preview.html", "<div class='ranking'><ol>" + ranking_html + "</ol></div>");
     fs.appendFileSync("preview.html", chatbotplus_html);
     fs.appendFileSync("preview.html", FOOTER);
   });
