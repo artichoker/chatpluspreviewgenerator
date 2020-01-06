@@ -340,6 +340,17 @@ const transforms = {
             ' placeholder="' +
             options[0] +
             '">';
+        } else if (type == "textform_date") {
+            elements +=
+              '<div><label for="' + name + '">' + label + "</label></div>";
+            elements +=
+              '<input type="date" id="' +
+              name +
+              '"' +
+              required +
+              ' placeholder="' +
+              options[0] +
+              '">';
         } else if (type == "textarea") {
           elements +=
             '<div><label for="' + name + '">' + label + "</label></div>";
@@ -506,6 +517,13 @@ const transforms = {
       return '<p class="btMes">スクリプト実行:<pre>' + parseCPText(obj.value) + "</pre></p>";
     }
   },
+  status: {
+    "<>": "div",
+    class: "text",
+    html: function (obj, index) {
+      return '<p class="btMes">[ステータス変更：' + parseCPText(obj.value) + " ]</p>";
+    }
+  },
   rule: {
     "<>": "div",
     class: "text",
@@ -530,6 +548,8 @@ const transforms = {
         return json2html.transform(obj, transforms.rule);
       } else if (obj.type === "code") {
         return json2html.transform(obj, transforms.code);
+      } else if (obj.type === "status") {
+        return json2html.transform(obj, transforms.status);
       } else {
         console.log("type:", obj.type);
       }
