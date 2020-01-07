@@ -196,14 +196,62 @@ label, input, button, textarea {
 .click_count { background-color: #ad4040;}
 a span.click_count { border-radius: 12px; width:12px; height:18px; display: inline-block; text-align:center;}
 .pv_count {  background-color: #33F; }
-.withdrawal_rate { background-color: #3CC; }
-.ranking li a {
-  display: inline-block;
+.withdrawal_rate { background-color: #3CC; }.ranking li {
+  display: block;
   width: 90%;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  height: 1rem;
+  overflow: hidden;
   padding-top: 4px;
 }
+.ranking ol {
+  counter-reset:number; /*数字をリセット*/
+  list-style-type: none!important; /*数字を一旦消す*/
+  padding:0.5em;
+  border: dashed 1px gray;
+}
+.ranking ol li {
+  position: relative;
+  line-height: 1.5em;
+  padding: 0.5em 0.5em 0.5em 30px;
+}
+.ranking ol li:nth-child(even) {
+  background-color: #F3F3F3;
+}
+.ranking ol li .pv_count {
+  display: inline-block;
+  width: 25px;
+  height: 1rem;
+  text-align: center;
+  line-height: 1rem;
+}
+.ranking ol li a {
+  text-decoration: none;
+  color: #333;
+}
+.ranking ol li:before{
+  /* 以下数字をつける */
+  position: absolute;
+  counter-increment: number;
+  content: counter(number);
+  /*数字のデザイン変える*/
+  display:inline-block;
+  background: #74c2f8;
+  color: white;
+  font-family: 'Avenir','Arial Black','Arial',sans-serif;
+  font-weight:bold;
+  font-size: 15px;
+  left: 0;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  text-align: center;
+  /*以下上下中央寄せのため*/
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-29%);
+}
+
+
 </style>
 <script src="node_modules/@glidejs/glide/dist/glide.min.js"></script>
 </head>
@@ -633,7 +681,7 @@ const transforms = {
   },
   ranking : {
     "<>": "li",
-    html: "<span class='pv_count'>${pv_count}</span> <a href='#id${id}'>${name}</a>"
+    html: "<span class='pv_count'>${pv_count}</span> ID:${id} <a href='#id${id}'>${name}</a>"
   },
   chatbot_simple: {
     "<>": "div",
@@ -712,6 +760,7 @@ fs.createReadStream(options.log)
       }
     })
 
+    log[0].id = '0';
     var ranking_html = json2html.transform(log, transforms.ranking);
 
     var chatbotplus_html = json2html.transform(data, transforms.chatbotplus);
