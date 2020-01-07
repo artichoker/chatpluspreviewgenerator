@@ -250,21 +250,37 @@ a span.click_count { border-radius: 12px; width:12px; height:18px; display: inli
   -webkit-transform: translateY(-50%);
   transform: translateY(-29%);
 }
-
-
+.to-top{
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 30px;
+  right: 0;
+  bottom: 0;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background: #000;
+  cursor: pointer;
+}
+.to-top a{
+  color: #fff;
+  text-decoration: none;
+}
 </style>
 <script src="node_modules/@glidejs/glide/dist/glide.min.js"></script>
 </head>
 <body>
 <div>
-<button id="btnAll">全件表示</button>
-<button id="btnRank">表示回数順</button>
-<button id="zero_pv">起動回数ゼロ</button>
-<button id="zero_click">クリックゼロ</button>
+<button id="btnAll"  onclick="displayAll()">全件表示</button>
+<button id="btnRank" onclick="toggleRanking()">起動回数ランキング</button>
+<button id="zero_pv" onclick="displayNoLog()">起動回数ゼロ</button>
 </div>
 `;
 
-FOOTER = `
+const FOOTER = `
 <script>
 new Glide('.glide').mount()
 </script>
@@ -288,6 +304,32 @@ document.addEventListener("click", function(e) {
   window.scrollTo(0, top);
 });
 </script>
+<script>
+document.getElementById("ranking_wrapper").style.display ="none";
+function toggleRanking(){
+	const p1 = document.getElementById("ranking_wrapper");
+	if(p1.style.display=="block"){
+		p1.style.display ="none";
+	}else{
+		p1.style.display ="block";
+	}
+}
+function displayAll () {
+  document.getElementById("ranking_wrapper").style.display ="none";
+  const haslogs = document.getElementsByClassName('haslog');
+  for (var i = 0; i<haslogs.length;i++) {
+    haslogs[i].style.display = "block";
+  }
+}
+function displayNoLog () {
+  document.getElementById("ranking_wrapper").style.display ="none";
+  const haslogs = document.getElementsByClassName('haslog');
+  for (var i = 0; i<haslogs.length;i++) {
+    haslogs[i].style.display = "none";
+  }
+}
+</script>
+<div class="to-top"><a href="#">TOP</a></div>
 </body>
 </html>
 `;
@@ -605,7 +647,7 @@ const transforms = {
   },
   chatbotplus: {
     "<>": "div",
-    class: "bot",
+    class: function() { if(typeof this.click_log !== 'undefined') { return "bot haslog"} else { return "bot nolog"} },
     html: [
       {
         "<>": "div",
@@ -765,7 +807,8 @@ fs.createReadStream(options.log)
 
     var chatbotplus_html = json2html.transform(data, transforms.chatbotplus);
     fs.writeFileSync("preview.html", HEADER);
-    fs.appendFileSync("preview.html", "<div class='ranking'><ol>" + ranking_html + "</ol></div>");
+    fs.appendFileSync("preview.html", "<div>[Rules]" + options.file + "<br>[Log]" + options.log + "</div>");
+    fs.appendFileSync("preview.html", "<div id='ranking_wrapper'><div class='ranking'><ol>" + ranking_html + "</ol></div></div>");
     fs.appendFileSync("preview.html", chatbotplus_html);
     fs.appendFileSync("preview.html", FOOTER);
   });
