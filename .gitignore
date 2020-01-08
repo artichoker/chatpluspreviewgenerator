@@ -1,7 +1,9 @@
 node_modules
 preview.html
+log.html
 package-lock.json
 chatplus-chatbotplusrules-*
 chatplus-chatbotrules-*
 chatplus-chatbotreport-*
+chatplus-chatlog-*
 backup

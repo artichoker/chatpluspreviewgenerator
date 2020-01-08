@@ -10,7 +10,8 @@
     "csv-parser": "^2.3.2",
     "csvtojson": "^2.0.10",
     "node-json2html": "^1.2.0",
-    "sprintf-js": "^1.1.2"
+    "sprintf-js": "^1.1.2",
+    "strip-bom-stream": "^4.0.0"
   },
   "devDependencies": {},
   "scripts": {
