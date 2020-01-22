@@ -468,12 +468,15 @@ const transforms = {
         let type = obj.options[i].type;
         let label = obj.options[i].label;
         let click_count = obj.options[i].click_count || "-";
+        let click_count_rate = Math.round((click_count / obj.sum_of_click_count)*1000)/10;
         if (type === "ctext") {
           options += sprintf(
-            '<a class="ctext" href="#%s">%s <span class="click_count">%s</span></a>',
+            '<a class="ctext" href="#%s">%s <span class="click_count">%s</span>(%s%%)</a>',
             label,
             label,
-            click_count
+
+            click_count,
+            click_count_rate
           );
         } else if (type === "url") {
           let target = "self";
@@ -481,18 +484,20 @@ const transforms = {
             target = "link";
           }
           options += sprintf(
-            '<a class="url" target="%s" href="%s">%s <span class="click_count">%s</span></a>',
+            '<a class="url" target="%s" href="%s">%s <span class="click_count">%s</span>(%s%%)</a>',
             target,
             obj.options[i].value,
             label,
-            click_count
+            click_count,
+            click_count_rate
           );
         } else if (type === "status") {
           options += sprintf(
-            '<a class="status" href="#%s">%s <span class="click_count">%s</span></a>',
+            '<a class="status" href="#%s">%s <span class="click_count">%s</span>(%s%%)</a>',
             label,
             label,
-            click_count
+            click_count,
+            click_count_rate
           );
         } else {
           console.log("text_select:type", type);
@@ -671,15 +676,18 @@ const transforms = {
             html: function (obj, index) {
               if (obj.click_log) {
                 var n = (Object.keys(obj.click_log).length - 7) / 2
+                obj.click_log.click_count = 0
                 if (n > 0) {
                   obj.action.forEach(element => {
                     if (element.type === "text_select") {
+                      element.value.sum_of_click_count = 0
                       element.value.options.forEach(opt => {
                         for (var i = 1; i <= n; i++) {
                           let aname = "a" + i + "_name"
                           let acount = "a" + i + "_click"
                           if (obj.click_log[aname] === opt.label) {
                             opt.click_count = obj.click_log[acount]
+                            element.value.sum_of_click_count += parseInt(opt.click_count, 10)
                           }
                         }
                       })
