@@ -6,63 +6,61 @@ const fs = require("fs");
 const csv = require("csv-parser");
 var json2html = require("node-json2html");
 
-const optionDefinitions = [
-  {
-    name: 'help',
-    alias: 'h',
-    type: Boolean,
-    description: 'show help',
-  },
-  {
-    name: 'file',
-    alias: 'f',
-    type: String,
-    description: 'chatplus json file.',
-  },
-  {
-    name: 'log',
-    alias: 'l',
-    type: String,
-    description: 'chatplus csv log file.',
-  }
+const optionDefinitions = [{
+        name: 'help',
+        alias: 'h',
+        type: Boolean,
+        description: 'show help',
+    },
+    {
+        name: 'file',
+        alias: 'f',
+        type: String,
+        description: 'chatplus json file.',
+    },
+    {
+        name: 'log',
+        alias: 'l',
+        type: String,
+        description: 'chatplus csv log file.',
+    }
 ];
 
-const sections = [
-  {
-    header: 'ChatPlus Preview Maker',
-    content: 'convert chatbotplus json file to html to preview the all bots.'
-  },
-  {
-    header: 'Options',
-    optionList: optionDefinitions
-  }
+const sections = [{
+        header: 'ChatPlus Preview Maker',
+        content: 'convert chatbotplus json file to html to preview the all bots.'
+    },
+    {
+        header: 'Options',
+        optionList: optionDefinitions
+    }
 ];
 
 const options = commandLineArgs(optionDefinitions);
 
 if (options.help) {
-  const usage = commandLineUsage(sections);
-  console.log(usage);
-  process.exit(0);
+    const usage = commandLineUsage(sections);
+    console.log(usage);
+    process.exit(0);
 }
 
 if (!options.file) {
-  const usage = commandLineUsage(sections);
-  console.log(usage);
-  process.exit(0);
+    const usage = commandLineUsage(sections);
+    console.log(usage);
+    process.exit(0);
 }
 
 if (!options.log) {
-  const usage = commandLineUsage(sections);
-  console.log(usage);
-  process.exit(0);
+    const usage = commandLineUsage(sections);
+    console.log(usage);
+    process.exit(0);
 }
 
 
 
 const rulea = {
-  clMes: "訪問者発言",
-  botMes: "ボット発言"
+    clMes: "訪問者発言",
+    botMes: "ボット発言"
 };
 
 const HEADER = `
@@ -82,7 +80,7 @@ const HEADER = `
     flex-wrap: wrap
 }
 .bot-0 {
-	display: none;
+	/*display: none;*/
 	background-color: #EDEDED;
 	color: #999;
 }
@@ -145,7 +143,7 @@ const HEADER = `
 	margin: 0 0 4px 0;
 	color: #FFF;
 }
-label, input, button, textarea {
+label, input, button, textarea, select, .textform-text {
 	font-size: 1rem;
 	margin: 6px 0 6px 15px;
 	width: 20rem;
@@ -194,7 +192,7 @@ label, input, button, textarea {
   white-space: nowrap;
 }
 .click_count { background-color: #ad4040;}
-a span.click_count { border-radius: 12px; width:12px; height:18px; display: inline-block; text-align:center;}
+a span.click_count { border-radius: 12px; width:24px; height:18px; display: inline-block; text-align:center;}
 .pv_count {  background-color: #33F; }
 .withdrawal_rate { background-color: #3CC; }.ranking li {
   display: block;
@@ -342,441 +340,448 @@ const GLIDE_ARROWS = `
 `;
 
 function parseCPText(s) {
-  s = s.replace(
-    /\[\[(?:(cpb|cpu|cplink="[^"]+"|cplink_target="[^"]+"|cpsize="[^"]+")[;:]){1,}([^\[]+)\]\]/g,
-    function (match, cp, s) {
-      let prefix = "";
-      let postfix = "";
-      tags = cp.split(";");
-      for (var i = 0; i < tags.length; i++) {
-        if ((tel = /cplink=["']tel:([0-9\-]+)["']/.exec(tags[i]))) {
-          prefix = '<a href="tel:' + tel[1] + '">' + prefix;
-          postfix += "</a>";
-        } else if ((link = /cplink=["']([^"']+)["']/.exec(tags[i]))) {
-          prefix = '<a href="' + link[1] + '">' + prefix;
-          postfix += "</a>";
-        } else if ((link = /cplink_target=["']([^"']+)["']/.exec(tags[i]))) {
-          prefix = '<a href="' + link[1] + '" target="link">' + prefix;
-          postfix += "</a>";
-        } else if (tags[i] === "cpb") {
-          prefix = "<strong>" + prefix;
-          postfix += "</strong>";
-        } else if (tags[i] === "cpu") {
-          prefix = "<u>" + prefix;
-          postfix += "</u>";
-        } else if ((font = /cpsize=["']([0-9]+)px["']/.exec(tags[i]))) {
-          let rem = 20 / font[1];
-          prefix = '<span style="font-size:' + rem + 'rem">' + prefix;
-          postfix += "</span>";
-        } else {
-          console.log("tag:", tags[i]);
+    s = s.replace(
+        /\[\[(?:(cpb|cpu|cplink="[^"]+"|cplink_target="[^"]+"|cpsize="[^"]+")[;:]){1,}([^\[]+)\]\]/g,
+        function(match, cp, s) {
+            let prefix = "";
+            let postfix = "";
+            tags = cp.split(";");
+            for (var i = 0; i < tags.length; i++) {
+                if ((tel = /cplink=["']tel:([0-9\-]+)["']/.exec(tags[i]))) {
+                    prefix = '<a href="tel:' + tel[1] + '">' + prefix;
+                    postfix += "</a>";
+                } else if ((link = /cplink=["']([^"']+)["']/.exec(tags[i]))) {
+                    prefix = '<a href="' + link[1] + '">' + prefix;
+                    postfix += "</a>";
+                } else if ((link = /cplink_target=["']([^"']+)["']/.exec(tags[i]))) {
+                    prefix = '<a href="' + link[1] + '" target="link">' + prefix;
+                    postfix += "</a>";
+                } else if (tags[i] === "cpb") {
+                    prefix = "<strong>" + prefix;
+                    postfix += "</strong>";
+                } else if (tags[i] === "cpu") {
+                    prefix = "<u>" + prefix;
+                    postfix += "</u>";
+                } else if ((font = /cpsize=["']([0-9]+)px["']/.exec(tags[i]))) {
+                    let rem = 20 / font[1];
+                    prefix = '<span style="font-size:' + rem + 'rem">' + prefix;
+                    postfix += "</span>";
+                } else {
+                    console.log("tag:", tags[i]);
+                }
+            }
+            return prefix + s + postfix;
         }
-      }
-      return prefix + s + postfix;
-    }
-  );
-  s = s.replace(/\\r\\n/g, "<br>");
-  return s.replace(/(\r\n)/g, "<br>");
+    );
+    s = s.replace(/\\r\\n/g, "<br>");
+    return s.replace(/(\r\n)/g, "<br>");
 }
 const transforms = {
-  rulea: {
-    "<>": "ul",
-    class: "rulea",
-    html: function (obj, index) {
-      if (rulea[obj[2]]) {
-      } else {
-        console.log("rulea:", obj[2]);
-      }
-      return sprintf(
-        '<li id="%s">[%s] %s %s 「%s」</li>',
-        obj[4],
-        obj[1],
-        rulea[obj[2]],
-        obj[3],
-        obj[4]
-      );
-    }
-  },
-  textform: {
-    "<>": "div",
-    class: "textform",
-    html: function (obj, index) {
-      let elements = "";
-      for (var i = 0; i < obj.elements.length; i++) {
-        let name = obj.elements[i].name;
-        let type = obj.elements[i].type;
-        let label = obj.elements[i].label;
-        let options = obj.elements[i].options;
-        let required = obj.elements[i].required == 1 ? " required" : "";
-        if (type == "textform") {
-          elements +=
-            '<div><label for="' + name + '">' + label + "</label></div>";
-          elements +=
-            '<input type="text" id="' +
-            name +
-            '"' +
-            required +
-            ' placeholder="' +
-            options[0] +
-            '">';
-        } else if (type == "textform_email") {
-          elements +=
-            '<div><label for="' + name + '">' + label + "</label></div>";
-          elements +=
-            '<input type="email" id="' +
-            name +
-            '"' +
-            required +
-            ' placeholder="' +
-            options[0] +
-            '">';
-        } else if (type == "textform_date") {
-            elements +=
-              '<div><label for="' + name + '">' + label + "</label></div>";
-            elements +=
-              '<input type="date" id="' +
-              name +
-              '"' +
-              required +
-              ' placeholder="' +
-              options[0] +
-              '">';
-        } else if (type == "textarea") {
-          elements +=
-            '<div><label for="' + name + '">' + label + "</label></div>";
-          elements +=
-            '<textarea id="' +
-            name +
-            '"' +
-            required +
-            ' placeholder="' +
-            options[0] +
-            '"></textarea>';
-        } else {
-          console.log("textform:type", type);
-        }
-      }
-      return elements + "<div><button>送信</button></div>";
-    }
-  },
-  text_select: {
-    "<>": "div",
-    class: "text_select",
-    html: function (obj, index) {
-      let options = "";
-      for (var i = 0; i < obj.options.length; i++) {
-        let type = obj.options[i].type;
-        let label = obj.options[i].label;
-        let click_count = obj.options[i].click_count || "-";
-        let click_count_rate = Math.round((click_count / obj.sum_of_click_count)*1000)/10;
-        if (type === "ctext") {
-          options += sprintf(
-            '<a class="ctext" href="#%s">%s <span class="click_count">%s</span>(%s%%)</a>',
-            label,
-            label,
-
-            click_count,
-            click_count_rate
-          );
-        } else if (type === "url") {
-          let target = "self";
-          if (obj.options[i].same_tab === "false") {
-            target = "link";
-          }
-          options += sprintf(
-            '<a class="url" target="%s" href="%s">%s <span class="click_count">%s</span>(%s%%)</a>',
-            target,
-            obj.options[i].value,
-            label,
-            click_count,
-            click_count_rate
-          );
-        } else if (type === "status") {
-          options += sprintf(
-            '<a class="status" href="#%s">%s <span class="click_count">%s</span>(%s%%)</a>',
-            label,
-            label,
-            click_count,
-            click_count_rate
-          );
-        } else {
-          console.log("text_select:type", type);
-        }
-      }
-      return '<p class="btMes">' + parseCPText(obj.text) + "</p>" + options;
-    }
-  },
-  imagemap: {
-    "<>": "div",
-    class: "imagemap",
-    html: function (obj, index) {
-      const scale = 0.5;
-      let options = JSON.parse(obj.value);
-      let media_id = obj.image.split("/")[6].split(".")[0];
-      let map = sprintf('<map name="#%s">', media_id);
-      let area = "";
-      for (var i = 0; i < options.actions.length; i++) {
-        let x1 = parseInt(options.actions[i].area.x, 10);
-        let y1 = parseInt(options.actions[i].area.y, 10);
-        let x2 = x1 + parseInt(options.actions[i].area.width, 10);
-        let y2 = y1 + parseInt(options.actions[i].area.height, 10);
-        let t = options.actions[i].text;
-        area += sprintf(
-          '<area shape="rect" coords="%d,%d,%d,%d" href="#%s" alt="%s">',
-          x1 * scale,
-          y1 * scale,
-          x2 * scale,
-          y2 * scale,
-          t,
-          t
-        );
-      }
-      map += area + "</map>";
-      return (
-        sprintf(
-          '<img src="%s" alt="%s" usemap="#%s" width="%d" height="%d">',
-          obj.image,
-          options.altText,
-          media_id,
-          options.baseSize.width * scale,
-          options.baseSize.height * scale
-        ) + map
-      );
-    }
-  },
-  glide_bullets: {
-    "<>": "div",
-    class: "glide__bullets",
-    "data-glide-el": "controls[nav]",
-    html: function (obj, index) {
-      let btn = "";
-      for (var i = 0; i < obj.images.length; i++) {
-        btn += sprintf(
-          '<button class="glide__bullet" data-glide-dir="=%s"></button>',
-          i
-        );
-      }
-      return btn;
-    }
-  },
-  glide_slides: {
-    "<>": "ul",
-    class: "glide__slides",
-    html: function (obj, index) {
-      let li = "";
-      for (var i = 0; i < obj.images.length; i++) {
-        let url = obj.images[i].url;
-        let mess = obj.images[i].message;
-        let label = obj.images[i].options[0].label;
-        li += sprintf(
-          '<li class="glide__slide"><div><img src="%s" alt="%s"></div><p>%s</p><a href="#%s" class="url">%s</a></li>',
-          url,
-          mess,
-          mess,
-          label,
-          label
-        );
-      }
-      return li;
-    }
-  },
-  glide_track: {
-    "<>": "div",
-    class: "glide__track",
-    "data-glide-el": "track",
-    html: function (obj, index) {
-      return (
-        json2html.transform(obj, transforms.glide_slides) +
-        json2html.transform(obj, transforms.glide_bullets)
-      );
-    }
-  },
-  carousel: {
-    "<>": "div",
-    class: "glide",
-    html: function (obj, index) {
-      return json2html.transform(obj, transforms.glide_track) + GLIDE_ARROWS;
-    }
-  },
-  text: {
-    "<>": "div",
-    class: "text",
-    html: function (obj, index) {
-      return '<p class="btMes">' + parseCPText(obj.value) + "</p>";
-    }
-  },
-  code: {
-    "<>": "div",
-    class: "text",
-    html: function (obj, index) {
-      return '<p class="btMes">スクリプト実行:<pre>' + parseCPText(obj.value) + "</pre></p>";
-    }
-  },
-  status: {
-    "<>": "div",
-    class: "text",
-    html: function (obj, index) {
-      return '<p class="btMes">[ステータス変更：' + parseCPText(obj.value) + " ]</p>";
-    }
-  },
-  rule: {
-    "<>": "div",
-    class: "text",
-    html: function (obj, index) {
-      return '<p class="btMes">特定ルールを実行: <a href="#id' + obj.value + '">ID:' + parseCPText(obj.value) + "</a></p>";
-    }
-  },
-  action: {
-    "<>": "div",
-    html: function (obj, index) {
-      if (obj.type === "text_select") {
-        return json2html.transform(obj.value, transforms.text_select);
-      } else if (obj.type === "text") {
-        return json2html.transform(obj, transforms.text);
-      } else if (obj.type === "textform") {
-        return json2html.transform(obj.value, transforms.textform);
-      } else if (obj.type === "imagemap") {
-        return json2html.transform(obj, transforms.imagemap);
-      } else if (obj.type === "carousel") {
-        return json2html.transform(obj.value, transforms.carousel);
-      } else if (obj.type === "rule") {
-        return json2html.transform(obj, transforms.rule);
-      } else if (obj.type === "code") {
-        return json2html.transform(obj, transforms.code);
-      } else if (obj.type === "status") {
-        return json2html.transform(obj, transforms.status);
-      } else {
-        console.log("type:", obj.type);
-      }
-    }
-  },
-  chatbotplus: {
-    "<>": "div",
-    class: function() { if(typeof this.click_log !== 'undefined') { return "bot haslog"} else { return "bot nolog"} },
-    html: [
-      {
-        "<>": "div",
-        class: "bot-${use_flg}",
-        html: [
-          { "<>": "h2", class: "name", id: "id${id}", text: "ID:${id} ${name}" },
-          { "<>": "div", class: "pv_count", text: function () { if (typeof this.click_log !== 'undefined') { return "起動回数: " + this.click_log.pv_count } else { return '-' } } },
-          { "<>": "div", class: "click_count", text: function () { if (typeof this.click_log !== 'undefined') { return "クリック数: " + this.click_log.click_count } else { return '-' } } },
-          { "<>": "div", class: "withdrawal_rate", text: function () { if (typeof this.click_log !== 'undefined') { return "離脱率: " + Math.round(this.click_log.withdrawal_rate * 1000) / 10 + "%" } else { return '-' } } },
-          { "<>": "h3", class: "remarks", text: "${remarks}" },
-          {
-            "<>": "div",
-            class: "rule",
-            html: function (obj, index) {
-              return json2html.transform(obj.rulea, transforms.rulea);
+    rulea: {
+        "<>": "ul",
+        class: "rulea",
+        html: function(obj, index) {
+            if (rulea[obj[2]]) {} else {
+                console.log("rulea:", obj[2]);
             }
-          },
-          {
-            "<>": "div",
-            class: "chatwindow",
-            html: function (obj, index) {
-              if (obj.click_log) {
-                var n = (Object.keys(obj.click_log).length - 7) / 2
-                obj.click_log.click_count = 0
-                if (n > 0) {
-                  obj.action.forEach(element => {
-                    if (element.type === "text_select") {
-                      element.value.sum_of_click_count = 0
-                      element.value.options.forEach(opt => {
-                        for (var i = 1; i <= n; i++) {
-                          let aname = "a" + i + "_name"
-                          let acount = "a" + i + "_click"
-                          if (obj.click_log[aname] === opt.label) {
-                            opt.click_count = obj.click_log[acount]
-                            element.value.sum_of_click_count += parseInt(opt.click_count, 10)
-                          }
-                        }
-                      })
+            return sprintf(
+                '<li id="%s">[%s] %s %s 「%s」</li>',
+                obj[4],
+                obj[1],
+                rulea[obj[2]],
+                obj[3],
+                obj[4]
+            );
+        }
+    },
+    textform: {
+        "<>": "div",
+        class: "textform",
+        html: function(obj, index) {
+            let elements = "";
+            for (var i = 0; i < obj.elements.length; i++) {
+                let name = obj.elements[i].name;
+                let type = obj.elements[i].type;
+                let label = obj.elements[i].label;
+                let options = obj.elements[i].options;
+                let required = obj.elements[i].required == 1 ? " required" : "";
+                if (type == "textform") {
+                    elements +=
+                        '<div><label for="' + name + '">' + label + "</label></div>";
+                    elements +=
+                        '<input type="text" id="' +
+                        name +
+                        '"' +
+                        required +
+                        ' placeholder="' +
+                        options[0] +
+                        '">';
+                } else if (type == "text") {
+                    elements +=
+                        '<div><strong class="textform-text">' + label + "</strong></div>";
+                } else if (type == "select") {
+                    elements +=
+                        '<div><label for="' + name + '">' + label + "</label></div>";
+                    elements += "<select>"
+                    for (var n = 0; n < options.length; n++) {
+                        elements +=
+                            '<option>' + options[n] + "</option>";
                     }
-                  });
+                    elements += "</select>"
+                } else if (type == "textform_email") {
+                    elements +=
+                        '<div><label for="' + name + '">' + label + "</label></div>";
+                    elements +=
+                        '<input type="email" id="' +
+                        name +
+                        '"' +
+                        required +
+                        ' placeholder="' +
+                        options[0] +
+                        '">';
+                } else if (type == "textform_date") {
+                    elements +=
+                        '<div><label for="' + name + '">' + label + "</label></div>";
+                    elements +=
+                        '<input type="date" id="' +
+                        name +
+                        '"' +
+                        required +
+                        ' placeholder="' +
+                        options[0] +
+                        '">';
+                } else if (type == "textarea") {
+                    elements +=
+                        '<div><label for="' + name + '">' + label + "</label></div>";
+                    elements +=
+                        '<textarea id="' +
+                        name +
+                        '"' +
+                        required +
+                        ' placeholder="' +
+                        options[0] +
+                        '"></textarea>';
+                } else {
+                    console.log("textform:type", type);
                 }
-              }
-              return json2html.transform(obj.action, transforms.action);
             }
-          }
-        ]
-      }
-    ]
-  },
-  chatbot: {
-    "<>": "div",
-    class: "bot",
-    html: [
-      {
-        "<>": "div",
-        class: "bot-1",
-        html: [
-          { "<>": "h2", class: "name", text: "ID:${#id} チャットボット" },
-          {
-            "<>": "div",
-            class: "rule",
-            html: function (obj, index) {
-              return json2html.transform(obj, transforms.rule_simple);
-            }
-          },
-          {
-            "<>": "div",
-            class: "chatwindow",
-            html: function (obj, index) {
-              return json2html.transform(obj, transforms.chatbot_simple);
-            }
-          }
-        ]
-      }
-    ]
-  },
-  ranking : {
-    "<>": "li",
-    html: "<span class='pv_count'>${pv_count}</span> ID:${id} <a href='#id${id}'>${name}</a>"
-  },
-  chatbot_simple: {
-    "<>": "div",
-    html: function (obj, index) {
-      return json2html.transform(obj, transforms.text_select_simple);
-    }
-  },
-  text_select_simple: {
-    "<>": "div",
-    class: "text_select",
-    html: function (obj, index) {
-      let options = "";
-
-      for (var i = 1; ; i++) {
-        if ("ボタン" + i in obj) {
-          let label = obj["ボタン" + i];
-          options += sprintf(
-            '<a class="ctext" href="#%s">%s</a>',
-            label,
-            label
-          );
-        } else {
-          break;
+            return elements + "<div><button>送信</button></div>";
         }
-      }
-      return (
-        '<p class="btMes">' +
-        parseCPText(obj["チャットボット発言"]) +
-        "</p>" +
-        options
-      );
+    },
+    text_select: {
+        "<>": "div",
+        class: "text_select",
+        html: function(obj, index) {
+            let options = "";
+            for (var i = 0; i < obj.options.length; i++) {
+                let type = obj.options[i].type;
+                let label = obj.options[i].label;
+                let click_count = obj.options[i].click_count || "-";
+                let click_count_rate = Math.round((click_count / obj.sum_of_click_count) * 1000) / 10;
+                if (type === "ctext") {
+                    options += sprintf(
+                        '<a class="ctext" href="#%s">%s <span class="click_count">%s</span>(%s%%)</a>',
+                        label,
+                        label,
+
+                        click_count,
+                        click_count_rate
+                    );
+                } else if (type === "url") {
+                    let target = "self";
+                    if (obj.options[i].same_tab === "false") {
+                        target = "link";
+                    }
+                    options += sprintf(
+                        '<a class="url" target="%s" href="%s">%s <span class="click_count">%s</span>(%s%%)</a>',
+                        target,
+                        obj.options[i].value,
+                        label,
+                        click_count,
+                        click_count_rate
+                    );
+                } else if (type === "status") {
+                    options += sprintf(
+                        '<a class="status" href="#%s">%s <span class="click_count">%s</span>(%s%%)</a>',
+                        label,
+                        label,
+                        click_count,
+                        click_count_rate
+                    );
+                } else {
+                    console.log("text_select:type", type);
+                }
+            }
+            return '<p class="btMes">' + parseCPText(obj.text) + "</p>" + options;
+        }
+    },
+    imagemap: {
+        "<>": "div",
+        class: "imagemap",
+        html: function(obj, index) {
+            const scale = 0.5;
+            let options = JSON.parse(obj.value);
+            let media_id = obj.image.split("/")[6].split(".")[0];
+            let map = sprintf('<map name="#%s">', media_id);
+            let area = "";
+            for (var i = 0; i < options.actions.length; i++) {
+                let x1 = parseInt(options.actions[i].area.x, 10);
+                let y1 = parseInt(options.actions[i].area.y, 10);
+                let x2 = x1 + parseInt(options.actions[i].area.width, 10);
+                let y2 = y1 + parseInt(options.actions[i].area.height, 10);
+                let t = options.actions[i].text;
+                area += sprintf(
+                    '<area shape="rect" coords="%d,%d,%d,%d" href="#%s" alt="%s">',
+                    x1 * scale,
+                    y1 * scale,
+                    x2 * scale,
+                    y2 * scale,
+                    t,
+                    t
+                );
+            }
+            map += area + "</map>";
+            return (
+                sprintf(
+                    '<img src="%s" alt="%s" usemap="#%s" width="%d" height="%d">',
+                    obj.image,
+                    options.altText,
+                    media_id,
+                    options.baseSize.width * scale,
+                    options.baseSize.height * scale
+                ) + map
+            );
+        }
+    },
+    glide_bullets: {
+        "<>": "div",
+        class: "glide__bullets",
+        "data-glide-el": "controls[nav]",
+        html: function(obj, index) {
+            let btn = "";
+            for (var i = 0; i < obj.images.length; i++) {
+                btn += sprintf(
+                    '<button class="glide__bullet" data-glide-dir="=%s"></button>',
+                    i
+                );
+            }
+            return btn;
+        }
+    },
+    glide_slides: {
+        "<>": "ul",
+        class: "glide__slides",
+        html: function(obj, index) {
+            let li = "";
+            for (var i = 0; i < obj.images.length; i++) {
+                let url = obj.images[i].url;
+                let mess = obj.images[i].message;
+                let label = obj.images[i].options[0].label;
+                li += sprintf(
+                    '<li class="glide__slide"><div><img src="%s" alt="%s"></div><p>%s</p><a href="#%s" class="url">%s</a></li>',
+                    url,
+                    mess,
+                    mess,
+                    label,
+                    label
+                );
+            }
+            return li;
+        }
+    },
+    glide_track: {
+        "<>": "div",
+        class: "glide__track",
+        "data-glide-el": "track",
+        html: function(obj, index) {
+            return (
+                json2html.transform(obj, transforms.glide_slides) +
+                json2html.transform(obj, transforms.glide_bullets)
+            );
+        }
+    },
+    carousel: {
+        "<>": "div",
+        class: "glide",
+        html: function(obj, index) {
+            return json2html.transform(obj, transforms.glide_track) + GLIDE_ARROWS;
+        }
+    },
+    text: {
+        "<>": "div",
+        class: "text",
+        html: function(obj, index) {
+            return '<p class="btMes">' + parseCPText(obj.value) + "</p>";
+        }
+    },
+    code: {
+        "<>": "div",
+        class: "text",
+        html: function(obj, index) {
+            return '<p class="btMes">スクリプト実行:<pre>' + parseCPText(obj.value) + "</pre></p>";
+        }
+    },
+    status: {
+        "<>": "div",
+        class: "text",
+        html: function(obj, index) {
+            return '<p class="btMes">[ステータス変更：' + parseCPText(obj.value) + " ]</p>";
+        }
+    },
+    rule: {
+        "<>": "div",
+        class: "text",
+        html: function(obj, index) {
+            return '<p class="btMes">特定ルールを実行: <a href="#id' + obj.value + '">ID:' + parseCPText(obj.value) + "</a></p>";
+        }
+    },
+    action: {
+        "<>": "div",
+        html: function(obj, index) {
+            if (obj.type === "text_select") {
+                return json2html.transform(obj.value, transforms.text_select);
+            } else if (obj.type === "text") {
+                return json2html.transform(obj, transforms.text);
+            } else if (obj.type === "textform") {
+                return json2html.transform(obj.value, transforms.textform);
+            } else if (obj.type === "imagemap") {
+                return json2html.transform(obj, transforms.imagemap);
+            } else if (obj.type === "carousel") {
+                return json2html.transform(obj.value, transforms.carousel);
+            } else if (obj.type === "rule") {
+                return json2html.transform(obj, transforms.rule);
+            } else if (obj.type === "code") {
+                return json2html.transform(obj, transforms.code);
+            } else if (obj.type === "status") {
+                return json2html.transform(obj, transforms.status);
+            } else {
+                console.log("type:", obj.type);
+            }
+        }
+    },
+    chatbotplus: {
+        "<>": "div",
+        class: function() { if (typeof this.click_log !== 'undefined') { return "bot haslog" } else { return "bot nolog" } },
+        html: [{
+            "<>": "div",
+            class: "bot-${use_flg}",
+            html: [
+                { "<>": "h2", class: "name", id: "id${id}", text: "ID:${id} ${name}" },
+                { "<>": "div", class: "pv_count", text: function() { if (typeof this.click_log !== 'undefined') { return "起動回数: " + this.click_log.pv_count } else { return '-' } } },
+                { "<>": "div", class: "click_count", text: function() { if (typeof this.click_log !== 'undefined') { return "クリック数: " + this.click_log.click_count } else { return '-' } } },
+                { "<>": "div", class: "withdrawal_rate", text: function() { if (typeof this.click_log !== 'undefined') { return "離脱率: " + Math.round(this.click_log.withdrawal_rate * 1000) / 10 + "%" } else { return '-' } } },
+                { "<>": "h3", class: "remarks", text: "${remarks}" },
+                {
+                    "<>": "div",
+                    class: "rule",
+                    html: function(obj, index) {
+                        return json2html.transform(obj.rulea, transforms.rulea);
+                    }
+                },
+                {
+                    "<>": "div",
+                    class: "chatwindow",
+                    html: function(obj, index) {
+                        if (obj.click_log) {
+                            var n = (Object.keys(obj.click_log).length - 7) / 2
+                            obj.click_log.click_count = 0
+                            if (n > 0) {
+                                obj.action.forEach(element => {
+                                    if (element.type === "text_select") {
+                                        element.value.sum_of_click_count = 0
+                                        element.value.options.forEach(opt => {
+                                            for (var i = 1; i <= n; i++) {
+                                                let aname = "a" + i + "_name"
+                                                let acount = "a" + i + "_click"
+                                                if (obj.click_log[aname] === opt.label) {
+                                                    opt.click_count = obj.click_log[acount]
+                                                    element.value.sum_of_click_count += parseInt(opt.click_count, 10)
+                                                }
+                                            }
+                                        })
+                                    }
+                                });
+                            }
+                        }
+                        return json2html.transform(obj.action, transforms.action);
+                    }
+                }
+            ]
+        }]
+    },
+    chatbot: {
+        "<>": "div",
+        class: "bot",
+        html: [{
+            "<>": "div",
+            class: "bot-1",
+            html: [
+                { "<>": "h2", class: "name", text: "ID:${#id} チャットボット" },
+                {
+                    "<>": "div",
+                    class: "rule",
+                    html: function(obj, index) {
+                        return json2html.transform(obj, transforms.rule_simple);
+                    }
+                },
+                {
+                    "<>": "div",
+                    class: "chatwindow",
+                    html: function(obj, index) {
+                        return json2html.transform(obj, transforms.chatbot_simple);
+                    }
+                }
+            ]
+        }]
+    },
+    ranking: {
+        "<>": "li",
+        html: "<span class='pv_count'>${pv_count}</span> ID:${id} <a href='#id${id}'>${name}</a>"
+    },
+    chatbot_simple: {
+        "<>": "div",
+        html: function(obj, index) {
+            return json2html.transform(obj, transforms.text_select_simple);
+        }
+    },
+    text_select_simple: {
+        "<>": "div",
+        class: "text_select",
+        html: function(obj, index) {
+            let options = "";
+
+            for (var i = 1;; i++) {
+                if ("ボタン" + i in obj) {
+                    let label = obj["ボタン" + i];
+                    options += sprintf(
+                        '<a class="ctext" href="#%s">%s</a>',
+                        label,
+                        label
+                    );
+                } else {
+                    break;
+                }
+            }
+            return (
+                '<p class="btMes">' +
+                parseCPText(obj["チャットボット発言"]) +
+                "</p>" +
+                options
+            );
+        }
+    },
+    rule_simple: {
+        "<>": "ul",
+        class: "rulea",
+        html: function(obj, index) {
+            var rules = obj["ユーザの発言が一致"].split("\\r\\n");
+            var options = "";
+            for (var i = 0; i < rules.length; i++) {
+                options += sprintf('<li id="%s">[%s] %s %s 「%s」</li>', rules[i], 'OR', rulea.clMes, '=', rules[i]);
+            }
+            return options;
+        }
     }
-  },
-  rule_simple: {
-    "<>": "ul",
-    class: "rulea",
-    html: function (obj, index) {
-      var rules = obj["ユーザの発言が一致"].split("\\r\\n");
-      var options = "";
-      for (var i = 0; i < rules.length; i++) {
-        options += sprintf('<li id="%s">[%s] %s %s 「%s」</li>', rules[i], 'OR', rulea.clMes, '=', rules[i]);
-      }
-      return options;
-    }
-  }
 };
 
 let json = fs.readFileSync(options.file);
@@ -784,40 +789,39 @@ const data = JSON.parse(json);
 const log = [];
 
 fs.createReadStream(options.log)
-  .pipe(csv())
-  .on('data', (data) => log.push(data))
-  .on('end', () => {
+    .pipe(csv())
+    .on('data', (data) => log.push(data))
+    .on('end', () => {
 
-    const result = Array.from(
-      data,
-      ael => (
-        ael.click_log = log.find(el => (el.id == ael.id && el.type === '2')),
-        ael));
+        const result = Array.from(
+            data,
+            ael => (
+                ael.click_log = log.find(el => (el.id == ael.id && el.type === '2')),
+                ael));
 
-    // 初回メッセージを先頭に追加する
-    data.unshift(JSON.parse(JSON.stringify(data[0]))); // cloneする
-    data[0].click_log = log[0]; // jsonの1番目がはじめの選択肢、csvの１番目が type=3の初回メッセージであることを決め打ちしています
-    data[0].id = '0';
-    data[0].rulea = []; // 初回メッセージはrulea を空にする
+        // 初回メッセージを先頭に追加する
+        data.unshift(JSON.parse(JSON.stringify(data[0]))); // cloneする
+        data[0].click_log = log[0]; // jsonの1番目がはじめの選択肢、csvの１番目が type=3の初回メッセージであることを決め打ちしています
+        data[0].id = '0';
+        data[0].rulea = []; // 初回メッセージはrulea を空にする
 
-    log.sort(function(a,b) {
-      a.pv_count = parseInt(a.pv_count)
-      b.pv_count = parseInt(b.pv_count)
-      if(a.pv_count > b.pv_count) {
-        return -1
-      } else {
-        return 1;
-      }
-    })
+        log.sort(function(a, b) {
+            a.pv_count = parseInt(a.pv_count)
+            b.pv_count = parseInt(b.pv_count)
+            if (a.pv_count > b.pv_count) {
+                return -1
+            } else {
+                return 1;
+            }
+        })
 
-    log[0].id = '0';
-    var ranking_html = json2html.transform(log, transforms.ranking);
+        log[0].id = '0';
+        var ranking_html = json2html.transform(log, transforms.ranking);
 
-    var chatbotplus_html = json2html.transform(data, transforms.chatbotplus);
-    fs.writeFileSync("preview.html", HEADER);
-    fs.appendFileSync("preview.html", "<div>[Rules]" + options.file + "<br>[Log]" + options.log + "</div>");
-    fs.appendFileSync("preview.html", "<div id='ranking_wrapper'><div class='ranking'><ol>" + ranking_html + "</ol></div></div>");
-    fs.appendFileSync("preview.html", chatbotplus_html);
-    fs.appendFileSync("preview.html", FOOTER);
-  });
-
+        var chatbotplus_html = json2html.transform(data, transforms.chatbotplus);
+        fs.writeFileSync("preview.html", HEADER);
+        fs.appendFileSync("preview.html", "<div>[Rules]" + options.file + "<br>[Log]" + options.log + "</div>");
+        fs.appendFileSync("preview.html", "<div id='ranking_wrapper'><div class='ranking'><ol>" + ranking_html + "</ol></div></div>");
+        fs.appendFileSync("preview.html", chatbotplus_html);
+        fs.appendFileSync("preview.html", FOOTER);
+    });
