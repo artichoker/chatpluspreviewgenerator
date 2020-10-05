@@ -341,7 +341,7 @@ const GLIDE_ARROWS = `
 
 function parseCPText(s) {
     s = s.replace(
-        /\[\[(?:(cpb|cpu|cplink="[^"]+"|cplink_target="[^"]+"|cpsize="[^"]+")[;:]){1,}([^\[]+)\]\]/g,
+        /\[\[(?:(cpb|cpu|cplink="[^"]+"|cplink_target="[^"]+"|cpsize="[^"]+"|cpbgcolor="[^"]+")[;:]){1,}([^\[]+)\]\]/g,
         function(match, cp, s) {
             let prefix = "";
             let postfix = "";
@@ -350,11 +350,16 @@ function parseCPText(s) {
                 if ((tel = /cplink=["']tel:([0-9\-]+)["']/.exec(tags[i]))) {
                     prefix = '<a href="tel:' + tel[1] + '">' + prefix;
                     postfix += "</a>";
+                } else if ((bgcolor = /cpbgcolor=["']([^"']+)["']/.exec(tags[i]))) {
+                    prefix = '<span style="background-color=' + bgcolor[1] + '">' + prefix;
+                    postfix += "</span>";
                 } else if ((link = /cplink=["']([^"']+)["']/.exec(tags[i]))) {
-                    prefix = '<a href="' + link[1] + '">' + prefix;
+                    let strLink = link[1].replace(/[ 📥✏🏪↩📄]+/g,"");
+                    prefix = '<a href="' + strLink + '">' + prefix;
                     postfix += "</a>";
                 } else if ((link = /cplink_target=["']([^"']+)["']/.exec(tags[i]))) {
-                    prefix = '<a href="' + link[1] + '" target="link">' + prefix;
+                    let strLink = link[1].replace(/[ 📥✏🏪↩📄]+/g,"");
+                    prefix = '<a href="' + strLink + '" target="link">' + prefix;
                     postfix += "</a>";
                 } else if (tags[i] === "cpb") {
                     prefix = "<strong>" + prefix;
@@ -384,9 +389,10 @@ const transforms = {
             if (rulea[obj[2]]) {} else {
                 console.log("rulea:", obj[2]);
             }
+            let strId = obj[4].replace(/[ 📥✏🏪↩📄]+/g,"");
             return sprintf(
                 '<li id="%s">[%s] %s %s 「%s」</li>',
-                obj[4],
+                strId,
                 obj[1],
                 rulea[obj[2]],
                 obj[3],
@@ -475,39 +481,64 @@ const transforms = {
             let options = "";
             for (var i = 0; i < obj.options.length; i++) {
                 let type = obj.options[i].type;
-                let label = obj.options[i].label;
+                let label = obj.options[i].label.replace(/[ 📥✏🏪↩📄]+/g,"");
                 let click_count = obj.options[i].click_count || "-";
                 let click_count_rate = Math.round((click_count / obj.sum_of_click_count) * 1000) / 10;
                 if (type === "ctext") {
-                    options += sprintf(
-                        '<a class="ctext" href="#%s">%s <span class="click_count">%s</span>(%s%%)</a>',
-                        label,
-                        label,
+                    if(click_count === "-") {
+                        options += sprintf(
+                            '<a class="ctext" href="#%s">%s</a>',
+                            label,
+                            label
+                        );
+                    }else{
+                        options += sprintf(
+                            '<a class="ctext" href="#%s">%s <span class="click_count">%s</span>(%s%%)</a>',
+                            label,
+                            label,
 
-                        click_count,
-                        click_count_rate
-                    );
+                            click_count,
+                            click_count_rate
+                        );
+                    }
                 } else if (type === "url") {
                     let target = "self";
                     if (obj.options[i].same_tab === "false") {
                         target = "link";
                     }
-                    options += sprintf(
-                        '<a class="url" target="%s" href="%s">%s <span class="click_count">%s</span>(%s%%)</a>',
-                        target,
-                        obj.options[i].value,
-                        label,
-                        click_count,
-                        click_count_rate
-                    );
+                    if(click_count === "-") {
+                        options += sprintf(
+                            '<a class="url" target="%s" href="%s">%s</a>',
+                            target,
+                            obj.options[i].value,
+                            label
+                        );
+                    }else{
+                        options += sprintf(
+                            '<a class="url" target="%s" href="%s">%s <span class="click_count">%s</span>(%s%%)</a>',
+                            target,
+                            obj.options[i].value,
+                            label,
+                            click_count,
+                            click_count_rate
+                        );
+                    }
                 } else if (type === "status") {
-                    options += sprintf(
-                        '<a class="status" href="#%s">%s <span class="click_count">%s</span>(%s%%)</a>',
-                        label,
-                        label,
-                        click_count,
-                        click_count_rate
-                    );
+                    if(click_count === "-") {
+                        options += sprintf(
+                            '<a class="status" href="#%s">%s</a>',
+                            label,
+                            label,
+                        );
+                    }else{
+                        options += sprintf(
+                            '<a class="status" href="#%s">%s <span class="click_count">%s</span>(%s%%)</a>',
+                            label,
+                            label,
+                            click_count,
+                            click_count_rate
+                        );
+                    }
                 } else {
                     console.log("text_select:type", type);
                 }
