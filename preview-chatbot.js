@@ -51,9 +51,10 @@ if (!options.file) {
 }
 
 if (!options.log) {
-    const usage = commandLineUsage(sections);
-    console.log(usage);
-    process.exit(0);
+    //const usage = commandLineUsage(sections);
+    //console.log(usage);
+    //process.exit(0);
+    options.log = "empty-chatlog.csv"
 }
 
 
