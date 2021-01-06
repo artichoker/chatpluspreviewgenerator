@@ -112,10 +112,33 @@ const HEADER = `
 	margin: 0 0 1rem 0;
 	padding: 0;
 }
+.chat {
+  padding:10px;
+  background: #7494c0;
+  overflow: hidden;
+  max-width: 400px;
+  margin: 0px auto;
+  font-size: 80%;
+}
+.chat .user .at {
+  text-align: right;
+}
 .chatwindow {
 	background-color: #F3F3F3;
-    width: 50%;
+    width: 80%;
     order: 2;
+  padding: 10px;
+  overflow: hidden;
+  line-height: 135%;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+.chat .user .chatwindow {
+  margin-left: auto;
+  margin-right: 0;
+}
+.agentName, .categoryName, .goal, .chatTags, .customeField, .memo, .visitorTags {
+  display: none;
 }
 .ctext,
 .url,
@@ -175,14 +198,8 @@ a span.click_count { border-radius: 12px; width:12px; height:18px; display: inli
   text-decoration: none;
 }
 </style>
-<script src="node_modules/@glidejs/glide/dist/glide.min.js"></script>
 </head>
 <body>
-<div>
-<button id="btnAll"  onclick="displayAll()">全件表示</button>
-<button id="btnRank" onclick="toggleRanking()">起動回数ランキング</button>
-<button id="zero_pv" onclick="displayNoLog()">起動回数ゼロ</button>
-</div>
 `;
 
 const FOOTER = `
@@ -317,7 +334,19 @@ const transforms = {
             class: "chat",
             html: function (obj, index) {
               const regex = /\[(.+)? (\d\d:\d\d:\d\d)\]/gi;
-              const message = obj.body.replace(regex, '</div></div><div>$1 at $2<div class="chatwindow">');
+              const message = obj.body.replace(regex, function(match){
+                if ( arguments[1] === undefined ) {
+                  whoClass = "user";
+                  whoDisplay = "user"
+                }else if ( arguments[1] == KenpoName ) {
+                  whoClass = "bot"
+                  whoDisplay = arguments[1]
+                } else{
+                  whoClass = "user"
+                  whoDisplay = arguments[1]
+                }
+                return '</div></div><div class="' + whoClass + '"><div class="at">' + whoDisplay + ' at ' + arguments[2] + '</div><div class="chatwindow">'
+              });
               return parseCPText(message.replace(/^<\/div><\/div>/,"")) + "</div></div>";
             }
           }
@@ -329,6 +358,7 @@ const transforms = {
 
 const log = [];
 const OUTPUT = "log.html"
+const KenpoName = "日本マクドナルド健康保険組合"
 
 fs.createReadStream(options.log)
   .pipe(stripBom())

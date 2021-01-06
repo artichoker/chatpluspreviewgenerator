@@ -8,3 +8,4 @@ chatplus-chatbotreport-*
 chatplus-chatlog-*
 backup
 *.html
+*.csv
